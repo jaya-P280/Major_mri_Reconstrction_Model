@@ -1,0 +1,8 @@
+torch
+fastapi
+uvicorn
+h5py
+matplotlib
+fastmri
+numpy
+opencv-python
