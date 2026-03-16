@@ -1,50 +1,77 @@
 # PATOMIR: Probabilistic Anatomical Transformer for Optimized MRI Reconstruction
 
-This repository contains the implementation of **PATOMIR**, a deep learning-based framework for **MRI reconstruction from under-sampled data**.
+PATOMIR is a deep learning–based MRI reconstruction framework designed to generate high-quality MRI images from undersampled k-space data. The system leverages transformer-based learning to improve reconstruction quality and efficiency.
 
-The system reconstructs high-quality MRI images from **k-space MRI data stored in `.h5` format** using a trained neural network model.
+The project also provides a **FastAPI-based inference API** where users can upload MRI data and obtain reconstructed MRI images.
 
-This project was developed as part of a **Major Project**.
+---
+
+# Project Demonstration
+
+Click the thumbnail below to watch the project demo video.
+
+[![PATOMIR Demo](https://img.youtube.com/vi/IXqDMBbsea8/maxresdefault.jpg)](https://youtu.be/IXqDMBbsea8)
 
 ---
 
 # Project Overview
 
-Magnetic Resonance Imaging (MRI) reconstruction is a critical process in medical imaging. Traditional reconstruction techniques require large sampling data and computational resources.
+Magnetic Resonance Imaging (MRI) reconstruction converts raw **k-space frequency data into visual images**. This reconstruction process can become challenging when the MRI data is **undersampled**, which often leads to artifacts or low-quality images. ([arXiv][1])
 
-PATOMIR introduces a **deep learning-based reconstruction pipeline** that reconstructs MRI images from **under-sampled k-space data** stored in `.h5` files. The model improves reconstruction quality while reducing the amount of required sampling.
+Recent advances in **deep learning and transformer architectures** have significantly improved medical image reconstruction tasks by learning complex spatial relationships and contextual information from medical images. ([ScienceDirect][2])
 
-The project includes a **FastAPI-based inference API** that allows users to upload MRI `.h5` files and obtain reconstructed MRI images.
+PATOMIR applies these modern deep learning techniques to reconstruct high-quality MRI images efficiently.
+
+---
+
+# Key Features
+
+* MRI reconstruction from **undersampled k-space data**
+* Deep learning model using **transformer-based architecture**
+* **FastAPI backend** for inference
+* Supports **.h5 MRI data input**
+* Generates reconstructed MRI images
+* REST API for easy integration
 
 ---
 
 # Repository Structure
 
-```id="f3a0s1"
+```
 Major_mri_Reconstrction_Model/
 │
-├── app.py                 # FastAPI server for prediction
-├── model.py               # Model architecture and loading
-├── utils.py               # MRI reconstruction utilities
-├── requirements.txt       # Project dependencies
-├── reconstructed.png      # Example reconstructed MRI output
-├── zero_filled.png        # Example zero-filled MRI image
-└── README.md              # Project documentation
+├── app.py
+├── model.py
+├── utils.py
+├── requirements.txt
+├── reconstructed.png
+├── zero_filled.png
+├── demo_video.mp4
+└── README.md
 ```
+
+File descriptions:
+
+* **app.py** – FastAPI application for prediction
+* **model.py** – Model architecture and loading
+* **utils.py** – Reconstruction utilities
+* **requirements.txt** – Python dependencies
+* **reconstructed.png** – Example reconstructed MRI output
+* **zero_filled.png** – Example zero-filled MRI input
 
 ---
 
 # Trained Model
 
-The trained model file is larger than GitHub's file size limit and therefore cannot be uploaded directly to the repository.
+The trained model is large and cannot be stored directly in GitHub.
 
 Download the trained model from Google Drive:
 
 https://drive.google.com/file/d/1bV6Un-KpgenzaJfzHUGFD04RI7y94zjy/view
 
-After downloading, place the model file inside the project directory:
+After downloading, place the model file in the project directory:
 
-```id="c9ru0j"
+```
 Major_mri_Reconstrction_Model/
 │
 ├── trained_model.pt
@@ -57,36 +84,36 @@ Major_mri_Reconstrction_Model/
 
 # Installation
 
-Clone the repository:
+Clone the repository
 
-```id="k0qu0g"
+```
 git clone https://github.com/jaya-P280/Major_mri_Reconstrction_Model.git
 cd Major_mri_Reconstrction_Model
 ```
 
-Create a virtual environment:
+Create a virtual environment
 
-```id="e48qcc"
+```
 python -m venv venv
 ```
 
-Activate the environment:
+Activate environment
 
 Windows
 
-```id="xhyzjn"
+```
 venv\Scripts\activate
 ```
 
 Linux / Mac
 
-```id="9zxy0r"
+```
 source venv/bin/activate
 ```
 
-Install required dependencies:
+Install dependencies
 
-```id="kh36p0"
+```
 pip install -r requirements.txt
 ```
 
@@ -94,21 +121,21 @@ pip install -r requirements.txt
 
 # Running the FastAPI Server
 
-Start the FastAPI server:
+Start the server
 
-```id="nprgo0"
+```
 uvicorn app:app --reload
 ```
 
-The API server will run at:
+Server runs at
 
-```id="ggutn7"
+```
 http://127.0.0.1:8000
 ```
 
-Interactive API documentation:
+API documentation available at
 
-```id="99m0hu"
+```
 http://127.0.0.1:8000/docs
 ```
 
@@ -124,15 +151,15 @@ POST /predict/
 
 ### Input
 
-* MRI **`.h5` file** containing k-space MRI data.
+MRI **.h5 file containing k-space data**
 
 ### Output
 
-* Reconstructed MRI image.
+Reconstructed MRI image.
 
-Example request using curl:
+Example request:
 
-```id="udshx5"
+```
 curl -X POST "http://127.0.0.1:8000/predict/" \
 -F "file=@sample_mri_data.h5"
 ```
@@ -141,12 +168,17 @@ curl -X POST "http://127.0.0.1:8000/predict/" \
 
 # Example Results
 
-The repository includes sample output images:
+The repository includes sample output images.
 
-* **zero_filled.png** → MRI image reconstructed using basic zero-filling.
-* **reconstructed.png** → MRI image reconstructed using the PATOMIR deep learning model.
+**zero_filled.png**
 
-These demonstrate the improved reconstruction quality of the model.
+Initial reconstruction using zero-filling technique.
+
+**reconstructed.png**
+
+Reconstruction generated by the trained deep learning model.
+
+These examples demonstrate the improved reconstruction quality of the PATOMIR model.
 
 ---
 
@@ -162,18 +194,34 @@ These demonstrate the improved reconstruction quality of the model.
 
 ---
 
+# Project Workflow
+
+```
+MRI k-space (.h5)
+        ↓
+Preprocessing
+        ↓
+PATOMIR Deep Learning Model
+        ↓
+MRI Reconstruction
+        ↓
+High-quality MRI Image
+```
+
+---
+
 # Project Team
 
-**Project Title**
+Project Title
 
 PATOMIR: Probabilistic Anatomical Transformer for Optimized Medical Image Reconstruction
 
-**Team Members**
+Team Members
 
 * P. Spandith
 * P. Jaya Prakash Goud
 
-**Project Supervisor**
+Project Supervisor
 
 Dr. V. Bharathi
 
@@ -181,13 +229,16 @@ Dr. V. Bharathi
 
 # Future Improvements
 
-* Web interface for uploading `.h5` MRI data
-* Docker deployment
-* Real-time reconstruction visualization
-* Integration with hospital imaging systems
+* Web interface for uploading MRI data
+* Docker deployment for easier setup
+* Real-time MRI reconstruction visualization
+* Integration with clinical imaging systems
 
 ---
 
 # License
 
-This project is developed for academic purposes as part of a major project.
+This project was developed for academic purposes as part of a major project.
+
+[1]: https://arxiv.org/pdf/1909.10391?utm_source=chatgpt.com "Model-Based and Data-Driven Strategies in Medical Image ..."
+[2]: https://www.sciencedirect.com/science/article/pii/S2667102622000717?utm_source=chatgpt.com "Review Transformers in medical image analysis"
