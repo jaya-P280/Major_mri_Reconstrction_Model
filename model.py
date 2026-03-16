@@ -14,7 +14,7 @@ def load_model():
     )
 
     checkpoint = torch.load(
-        "brain_leaderboard_state_dict.pt",
+        "trained_model.pt",
         map_location=device
     )
 
@@ -22,11 +22,11 @@ def load_model():
     model.to(device)
     model.eval()
 
-    # 🔥 If GPU available → use half precision
+    # If GPU available → use half precision
     if device.type == "cuda":
         model = model.half()
 
-    # 🔥 Disable gradient tracking globally
+    # Disable gradient tracking globally
     for param in model.parameters():
         param.requires_grad = False
 

@@ -6,3 +6,4 @@ matplotlib
 fastmri
 numpy
 opencv-python
+scikit-image

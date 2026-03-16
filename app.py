@@ -14,17 +14,14 @@ async def predict(file: UploadFile = File(...)):
 
     temp_file = "temp.h5"
 
+    # Save uploaded file
     with open(temp_file, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    recon, zf, change_map = run_inference(model, device, temp_file)
+    # Run model inference
+    recon, zf, heatmap, psnr, ssim = run_inference(model, device, temp_file)
 
-    # Convert tensors to numpy
-    recon = recon.numpy()
-    zf = zf.numpy()
-    change_map = change_map.numpy()
-
-    # Normalize images to 0-255
+    # Normalize images
     def normalize(img):
         img = img - img.min()
         img = img / (img.max() + 1e-8)
@@ -32,7 +29,7 @@ async def predict(file: UploadFile = File(...)):
 
     recon_img = normalize(recon)
     zf_img = normalize(zf)
-    heatmap_img = normalize(change_map)
+    heatmap_img = normalize(heatmap)
 
     # Apply heatmap color
     heatmap_color = cv2.applyColorMap(heatmap_img, cv2.COLORMAP_JET)
@@ -41,10 +38,15 @@ async def predict(file: UploadFile = File(...)):
     recon_img = cv2.cvtColor(recon_img, cv2.COLOR_GRAY2BGR)
     zf_img = cv2.cvtColor(zf_img, cv2.COLOR_GRAY2BGR)
 
-    # Stack horizontally
+    # Combine images
     combined = np.hstack((zf_img, recon_img, heatmap_color))
 
     output_path = "output.png"
+    cv2.putText(combined, f"PSNR: {psnr:.2f}", (10,30),cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,255), 2)
+    cv2.putText(combined, f"SSIM: {ssim:.3f}", (10,60),cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,255), 2)
     cv2.imwrite(output_path, combined)
-
-    return FileResponse(output_path, media_type="image/png")
+    cv2.putText(zf_img, "Zero Filled", (10,20),cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2)
+    cv2.putText(recon_img, "Reconstructed", (10,20),cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2)
+    cv2.putText(heatmap_color, "Heatmap", (10,20),cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2)
+    
+    return FileResponse("output.png", media_type="image/png")
