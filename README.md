@@ -94,7 +94,7 @@ cd Major_mri_Reconstrction_Model
 Create a virtual environment
 
 ```
-python -m venv venv
+conda create -n myenv python=3.10
 ```
 
 Activate environment
@@ -102,15 +102,8 @@ Activate environment
 Windows
 
 ```
-venv\Scripts\activate
+conda activate myenv
 ```
-
-Linux / Mac
-
-```
-source venv/bin/activate
-```
-
 Install dependencies
 
 ```
