@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MRI Reconstruction</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: #111827;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 900px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #9ca3af;
+            margin-bottom: 20px;
+        }
+
+        .upload-box {
+            border: 2px dashed #374151;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .upload-box:hover {
+            border-color: #3b82f6;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-name {
+            font-size: 13px;
+            color: #60a5fa;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background: #3b82f6;
+            border: none;
+            padding: 12px 20px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+        }
+
+        button:hover:not(:disabled) {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .images {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .image-box {
+            background: #1f2937;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .image-box h4 {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #9ca3af;
+        }
+
+        img {
+            width: 100%;
+            border-radius: 8px;
+            border: 2px solid #374151;
+        }
+
+        .metrics {
+            margin-top: 20px;
+            padding: 10px;
+            background: #1f2937;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #22c55e;
+        }
+
+        .loader {
+            margin-top: 15px;
+            display: none;
+            font-size: 14px;
+            color: #60a5fa;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h2>🧠 MRI Reconstruction System</h2>
+    <div class="subtitle">Upload .h5 OR Image (.png, .jpg)</div>
+
+    <!-- Drag & Drop Upload -->
+    <div class="upload-box" onclick="document.getElementById('fileInput').click()" 
+         ondrop="dropHandler(event)" 
+         ondragover="event.preventDefault()">
+        📂 Click or Drag & Drop File Here
+    </div>
+
+    <input type="file" id="fileInput" accept=".h5,.png,.jpg,.jpeg" onchange="showFileName()">
+
+    <div class="file-name" id="fileName"></div>
+
+    <button id="uploadBtn" onclick="uploadFile()">Upload & Predict</button>
+
+    <div class="loader" id="loader">⏳ Processing... please wait</div>
+
+    <div class="images">
+        <div class="image-box">
+            <h4>Zero Filled</h4>
+            <img id="zf">
+        </div>
+
+        <div class="image-box">
+            <h4>Reconstruction</h4>
+            <img id="recon">
+        </div>
+
+        <div class="image-box">
+            <h4>Heatmap</h4>
+            <img id="heatmap">
+        </div>
+    </div>
+
+    <div class="metrics" id="metrics"></div>
+
+</div>
+
+<script>
+
+function showFileName() {
+    const file = document.getElementById("fileInput").files[0];
+    document.getElementById("fileName").innerText = file ? file.name : "";
+}
+
+// Drag & Drop
+function dropHandler(event) {
+    event.preventDefault();
+    const fileInput = document.getElementById("fileInput");
+    fileInput.files = event.dataTransfer.files;
+    showFileName();
+}
+
+async function uploadFile() {
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
+    const loader = document.getElementById("loader");
+    const btn = document.getElementById("uploadBtn");
+
+    if (!file) {
+        alert("Please select a file");
+        return;
+    }
+
+    loader.style.display = "block";
+    btn.disabled = true;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const response = await fetch("/predict/", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+
+        document.getElementById("zf").src =
+            "data:image/png;base64," + data.zero_filled;
+
+        document.getElementById("recon").src =
+            "data:image/png;base64," + data.reconstruction;
+
+        document.getElementById("heatmap").src =
+            "data:image/png;base64," + data.heatmap;
+
+        document.getElementById("metrics").innerText =
+            `PSNR: ${data.psnr.toFixed(2)} | SSIM: ${data.ssim.toFixed(3)}`;
+
+    } catch (error) {
+        alert("Error processing file");
+        console.error(error);
+    }
+
+    loader.style.display = "none";
+    btn.disabled = false;
+}
+
+</script>
+
+</body>
+</html>
