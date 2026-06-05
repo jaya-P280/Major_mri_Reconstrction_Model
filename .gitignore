@@ -1,6 +1,13 @@
-
+# Machine Learning models
 *.pt
 *.h5
-__pycache__/
+
+# Python cache files
+**/__pycache__/
 *.pyc
+
+# Video files
 *.mp4
+
+# Editor settings
+.vscode/
