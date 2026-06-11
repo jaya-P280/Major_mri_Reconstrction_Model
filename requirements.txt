@@ -7,3 +7,5 @@ fastmri
 numpy
 opencv-python
 scikit-image
+requests
+python-multipart
